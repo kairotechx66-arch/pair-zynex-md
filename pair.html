@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>KAIRO ZYNEX — Pair Device</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+    --violet: #8b5cf6;
+    --cyan: #22d3ee;
+    --rose: #fb7185;
+    --bg: #05050a;
+    --glass: rgba(255,255,255,0.04);
+    --glass-border: rgba(255,255,255,0.10);
+    --text: #f1f2f6;
+    --muted: #8b8fa3;
+    --danger: #fb7185;
+}
+
+* { box-sizing: border-box; }
+
+body{
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Sora', sans-serif;
+    background:
+        radial-gradient(ellipse 60% 50% at 20% 0%, rgba(139,92,246,0.25), transparent),
+        radial-gradient(ellipse 60% 50% at 80% 100%, rgba(34,211,238,0.20), transparent),
+        var(--bg);
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.orb{
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.35;
+    z-index: 0;
+    pointer-events: none;
+}
+.orb1{ width: 260px; height: 260px; background: var(--violet); top: -60px; left: -60px; }
+.orb2{ width: 220px; height: 220px; background: var(--cyan); bottom: -60px; right: -40px; }
+
+.shell{
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 400px;
+}
+
+.badge{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 18px;
+}
+.badge .dot{
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 8px var(--cyan);
+}
+
+h1{
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0 0 6px;
+    background: linear-gradient(120deg, var(--violet), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+}
+
+.lede{
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.55;
+    margin: 0 0 28px;
+    max-width: 320px;
+}
+
+.panel{
+    background: var(--glass);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 26px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+
+label{
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+}
+
+.field{
+    position: relative;
+    margin-bottom: 6px;
+}
+
+input[type="text"]{
+    width: 100%;
+    background: rgba(0,0,0,0.35);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 15px 16px;
+    color: var(--text);
+    font-family: 'Fira Code', monospace;
+    font-size: 15px;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+}
+input[type="text"]:focus{
+    border-color: var(--violet);
+    box-shadow: 0 0 0 3px rgba(139,92,246,0.18);
+}
+input[type="text"]::placeholder{ color: #4b4f5e; }
+
+.hint{
+    font-size: 11px;
+    color: var(--muted);
+    margin: 8px 0 22px;
+}
+
+button{
+    width: 100%;
+    border: none;
+    padding: 15px;
+    border-radius: 12px;
+    background: linear-gradient(120deg, var(--violet), var(--cyan));
+    color: #05050a;
+    font-weight: 700;
+    font-size: 14.5px;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition: transform .15s, filter .15s;
+}
+button:hover{ filter: brightness(1.1); transform: translateY(-1px); }
+button:active{ transform: scale(0.98); }
+button:disabled{ opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.result{
+    margin-top: 22px;
+    display: none;
+}
+.result.visible{ display: block; }
+
+.result-label{
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+}
+
+.code-shell{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(34,211,238,0.08);
+    border: 1px solid rgba(34,211,238,0.30);
+    border-radius: 14px;
+    padding: 6px 6px 6px 18px;
+}
+
+.code{
+    flex: 1;
+    text-align: center;
+    font-family: 'Fira Code', monospace;
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: var(--cyan);
+}
+
+.copy{
+    flex-shrink: 0;
+    width: 46px;
+    height: 46px;
+    border: none;
+    border-radius: 10px;
+    background: rgba(34,211,238,0.18);
+    color: var(--cyan);
+    font-size: 19px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.copy:hover{ background: rgba(34,211,238,0.30); }
+.copy:active{ transform: scale(0.92); }
+
+.copy-msg{
+    text-align: right;
+    font-size: 11.5px;
+    color: var(--cyan);
+    margin-top: 8px;
+    height: 16px;
+    opacity: 0;
+    transition: opacity .2s;
+}
+.copy-msg.visible{ opacity: 1; }
+
+.error{
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--danger);
+    display: none;
+    line-height: 1.5;
+}
+.error.visible{ display: block; }
+
+.steps{
+    list-style: none;
+    margin: 22px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.steps li{
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.5;
+    padding-left: 22px;
+    position: relative;
+}
+.steps li::before{
+    content: attr(data-n);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: rgba(139,92,246,0.2);
+    color: var(--violet);
+    font-size: 9px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.foot{
+    margin-top: 26px;
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #34384a;
+}
+</style>
+</head>
+<body>
+
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<div class="shell">
+    <div class="badge"><span class="dot"></span> Secure Gateway</div>
+    <h1>KAIRO ZYNEX</h1>
+    <p class="lede">Link your WhatsApp number to the bot instance using a one-time pairing code.</p>
+
+    <div class="panel">
+        <label for="phone">WhatsApp Number</label>
+        <div class="field">
+            <input type="text" id="phone" placeholder="e.g. 50912345678" inputmode="tel" />
+        </div>
+        <p class="hint">Country code + number, no "+" or spaces.</p>
+
+        <button id="submitBtn">Generate Pairing Code</button>
+
+        <div class="error" id="errorBox"></div>
+
+        <div class="result" id="resultBox">
+            <p class="result-label">Your Code</p>
+            <div class="code-shell">
+                <div class="code" id="codeValue">— — — —</div>
+                <button class="copy" id="copyBtn" title="Copy code">⧉</button>
+            </div>
+            <div class="copy-msg" id="copyFeedback">Copied to clipboard</div>
+        </div>
+
+        <ol class="steps">
+            <li data-n="1">Open WhatsApp → Settings → Linked Devices</li>
+            <li data-n="2">Tap "Link a Device"</li>
+            <li data-n="3">Choose "Link with phone number instead"</li>
+            <li data-n="4">Enter the code shown above</li>
+        </ol>
+    </div>
+
+    <p class="foot">Powered by Kairo Dev</p>
+</div>
+
+<script>
+    const btn = document.getElementById("submitBtn");
+    const phoneInput = document.getElementById("phone");
+    const resultBox = document.getElementById("resultBox");
+    const codeValue = document.getElementById("codeValue");
+    const errorBox = document.getElementById("errorBox");
+    const copyBtn = document.getElementById("copyBtn");
+    const copyFeedback = document.getElementById("copyFeedback");
+
+    btn.addEventListener("click", async () => {
+        const number = phoneInput.value.trim().replace(/[^0-9]/g, "");
+        errorBox.classList.remove("visible");
+        resultBox.classList.remove("visible");
+        copyFeedback.classList.remove("visible");
+
+        if (!number) {
+            errorBox.textContent = "Please enter a phone number.";
+            errorBox.classList.add("visible");
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = "Requesting...";
+
+        try {
+            const res = await fetch("/api/pair", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ number })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.error || "Failed to get pairing code");
+            }
+
+            if (!data.code) {
+                const friendlyMessage =
+                    data.status === "already_connected"
+                        ? "This number is already connected."
+                        : data.status === "reconnecting"
+                        ? "Reconnecting with an existing session, please wait..."
+                        : data.error || "No pairing code was returned. Please try again.";
+                throw new Error(friendlyMessage);
+            }
+
+            codeValue.textContent = data.code;
+            resultBox.classList.add("visible");
+        } catch (err) {
+            errorBox.textContent = err.message;
+            errorBox.classList.add("visible");
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "Generate Pairing Code";
+        }
+    });
+
+    copyBtn.addEventListener("click", async () => {
+        const code = codeValue.textContent;
+        if (!code || code === "— — — —") return;
+        try {
+            await navigator.clipboard.writeText(code);
+            copyFeedback.classList.add("visible");
+            setTimeout(() => copyFeedback.classList.remove("visible"), 2000);
+        } catch (err) {
+            const range = document.createRange();
+            range.selectNode(codeValue);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            document.execCommand("copy");
+            copyFeedback.classList.add("visible");
+            setTimeout(() => copyFeedback.classList.remove("visible"), 2000);
+        }
+    });
+</script>
+
+</body>
+</html>
